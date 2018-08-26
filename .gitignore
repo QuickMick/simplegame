@@ -5,6 +5,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# compiled
+public/game.js
+
 # Runtime data
 pids
 *.pid

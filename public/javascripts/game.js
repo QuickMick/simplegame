@@ -1,0 +1,1 @@
+console.error("Error: Cannot find module './resources.json' from 'C:\\game\\simplegame\\client'");

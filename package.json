@@ -1,0 +1,34 @@
+{
+    "name": "simplegame",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "start": "node ./bin/www",
+        "watch-js": "cmd /k watchify client/main.js -o public/javascripts/game.js -v -d"
+    },
+    "devDependencies": {
+        "mocha": "*",
+        "watchify": "*"
+    },
+    "dependencies": {
+        "helmet": "*",
+        "http-errors": "~1.6.2",
+        "body-parser": "~1.16.0",
+        "cookie-parser": "~1.4.3",
+        "debug": "~2.6.0",
+        "eventemitter3": "^3.0.0",
+        "express": "~4.14.1",
+        "matter-js": "^0.14.0",
+        "morgan": "~1.7.0",
+        "pixi-display": "*",
+        "pixi-extra-filters": "*",
+        "pixi-filters": "^1.0.6",
+        "pixi.js": "*",
+        "planck-js": "^0.1.36",
+        "pug": "^2.0.0-rc.2",
+        "serve-favicon": "~2.3.2",
+        "socket.io": "*",
+        "socket.io-client": "*",
+        "uuid": "^3.1.0"
+    }
+}
