@@ -1,0 +1,16 @@
+{
+  "default": {
+    "base_folder": "default",
+    "content": {
+      "missing_texture": {
+        "texture": "missing.png"
+      },
+      "grass": {
+        "texture": "grass.png"
+      },
+      "sand": {
+        "texture": "sand.png"
+      }
+    }
+  }
+}
