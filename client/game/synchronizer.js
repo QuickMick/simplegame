@@ -4,17 +4,12 @@
 
 'use strict';
 
+const Events = require('events');
+
 const Ticks = require('./../../core/ticks.json');
 const PKG = require("./../../core/com");
 const UpdateQueue = require('./../../core/updatequeue');
 
-const EventEmitter3 = require('eventemitter3');
-
-//var GameState = require("./gamestate");
-
-//var EntityManager = require("./entitymanager");
-
-//TODO: in evts json
 const EVT_ON_CLIENT_VALUE_REJECTED = "onClientValueRejected";
 const EVT_ON_CLIENT_VALUE_UPDATE = "onClientValueUpdate";
 
@@ -32,7 +27,7 @@ const EVT_ON_SERVER_UPDATE_SEPERATOR = "_";
 /**
  * Receives all data from the server and changed data from the client and distributes it.
  */
-class Synchronizer extends EventEmitter3 {
+class Synchronizer extends Events {
   constructor(supportedMessages) {
     super();
     this.socket = null;
@@ -117,10 +112,7 @@ class Synchronizer extends EventEmitter3 {
       return;
     }
 
-    this.socket = require('socket.io-client').connect(PKG.NAMESPACES.MINIGOLF, {
-      query: "gameid=" + GAME_ID
-    });
-
+    this.socket = require('socket.io-client').connect();
     this._initHandlers();
   }
 

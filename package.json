@@ -11,13 +11,13 @@
     "watchify": "*"
   },
   "dependencies": {
-    "helmet": "*",
-    "http-errors": "~1.6.2",
     "body-parser": "~1.16.0",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.0",
     "eventemitter3": "^3.0.0",
     "express": "~4.14.1",
+    "helmet": "*",
+    "http-errors": "~1.6.2",
     "matter-js": "^0.14.0",
     "morgan": "~1.7.0",
     "pixi-display": "*",
@@ -29,6 +29,6 @@
     "serve-favicon": "~2.3.2",
     "socket.io": "*",
     "socket.io-client": "*",
-    "uuid": "^3.1.0"
+    "uuid": "^3.3.2"
   }
 }
