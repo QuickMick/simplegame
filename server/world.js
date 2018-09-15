@@ -19,27 +19,38 @@ class World {
     this.world.on('joint-removed', () => {});
     this.world.on('fixture-removed', () => {});
     this.world.on('body-removed', () => {});
-  }
 
-  /**
-   * loads a map
-   *
-   * @param {map} map object
-   * @memberof World
-   */
-  _loadMap(map) {
+    setInterval(() => {
+      // in each frame call world.step(timeStep) with fixed timeStep
+      world.step(TICKS.SERVER_UPDATE_INTERVAL);
+      // iterate over bodies and fixtures
+      for (var body = world.getBodyList(); body; body = body.getNext()) {
+        for (var fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
+          // draw or update fixture
+        }
+      }
+    }, TICKS.SERVER_UPDATE_INTERVAL));
+}
 
-  }
+/**
+ * loads a map
+ *
+ * @param {map} map object
+ * @memberof World
+ */
+_loadMap(map) {
 
-  update(delta) {
-    // this.world.step(TICKS.SERVER_UPDATE_INTERVAL);
-    this.world.step(delta);
-  }
+}
 
-  addPlayer(client) {
-    const player = this.world.createBody(Vec2(0, 0));
-    // planck.Circle();
-  }
+update(delta) {
+  // this.world.step(TICKS.SERVER_UPDATE_INTERVAL);
+  this.world.step(delta);
+}
+
+addPlayer(client) {
+  const player = this.world.createBody(Vec2(0, 0));
+  // planck.Circle();
+}
 }
 
 module.exports = World;

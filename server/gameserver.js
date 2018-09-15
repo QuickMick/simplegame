@@ -1,7 +1,9 @@
 'use strict';
 const debug = require('debug')('wastelandworld:server');
+const COM = require('./../core/com');
 const socketIo = require('socket.io');
 const uuid = require("uuid/v4");
+const World = require('./world');
 
 const CONF = require('./conf.json');
 
@@ -29,32 +31,50 @@ class Server {
     this.io = null;
     this.connected = 0;
     this.clients = new Map();
+    this.world = new World();
   }
 
   run(server) {
     this.io = socketIo(server);
     debug("sockets running");
-
     this.io.on("connection", this._clientConnected.bind(this));
-
   }
 
   _clientConnected(socket) {
     // if there are to many clients connected,
     // refuse the connection and return
-    if (this.clients.size() >= CONF.MAX_CLIENTS) {
+    if (this.clients.size >= CONF.MAX_CLIENTS) {
       socket.disconnect();
       return;
     }
     // creat client and add it to the list
-    this.clients.set(socket.id, new Client(socket));
+    const client = new Client(socket);
+    this.clients.set(socket.id, client);
     debug(`client ${socket.id} with ip ${socket.handshake.address} disconnected`);
     socket.on("disconnect", this._clientDisconnect.bind(this, socket));
+
+    this._sendToClient(
+      socket,
+      COM.PROTOCOL.GENERAL.TO_CLIENT.RESPONSE_CLIENT_ACCEPTED,
+      COM.createEvent(
+        this.id, {
+          serverID: this.id,
+        }
+      )
+    );
+
+    this._sendToClient(
+      socket,
+      COM.PROTOCOL.GENERAL.TO_CLIENT.INIT_DATA,
+      COM.createEvent(
+        this.id, {
+          client: client.getClientData()
+        }
+      )
+    );
   }
 
   _clientDisconnect(socket, reason) {
-
-
     debug(`client ${socket.id} disconnected`);
     this.clients.delete(socket.id);
   }
