@@ -7,6 +7,7 @@ const THREE = require("three");
 const Events = require('events');
 const InputManager = require('./inputmanager');
 const Synchronizer = require('./synchronizer');
+const MapManager = require('./mapmanager');
 const PKG = require('./../../core/com');
 const CONFIG = require('./../config.json');
 
@@ -17,11 +18,14 @@ class GameManager extends Events {
     //  this.inputManager = new InputManager(this.app);
     // this.inputManager.loadMapping(CONFIG.KEY_MAPPING);
 
-    this.synchronizer = new Synchronizer(PKG.PROTOCOL.MODULES.MINIGOLF.TO_CLIENT);
+    this.mapManager = new MapManager();
+    this.synchronizer = new Synchronizer(PKG.PROTOCOL.MODULES.SHOOTER.TO_CLIENT);
 
   }
 
   start() {
+
+
     /*
         //TODO von evts json
         //   this.synchronizer.on("on"+COM.PROTOCOL.MODULES.MINIGOLF.TO_CLIENT.MAP,(map) => this.mapManager.onMapReceived(map));
@@ -35,9 +39,9 @@ class GameManager extends Events {
         this.synchronizer.on("onClientConnected", (initDataEvt) => this.entityManager.initDataHandler(initDataEvt));
 
         this.inputManager.on("mousemove", (e) => this.playerActionManager.onMouseMove(e));
-    */
+   
     this.synchronizer.start();
-
+ */
   }
 
   update(delta) {
@@ -56,7 +60,7 @@ class GameManager extends Events {
   startScene(target) {
     const x = target.getBoundingClientRect();
     this.camera = new THREE.PerspectiveCamera(70, x.width / x.height, 0.01, 10);
-    this.camera.position.z = 1;
+    this.camera.position.z = 5;
 
     this.scene = new THREE.Scene();
 
@@ -68,6 +72,11 @@ class GameManager extends Events {
 
     this.mesh = new THREE.Mesh(this.geometry, this.material);
     this.scene.add(this.mesh);
+
+
+
+    this.synchronizer.on("on" + PKG.PROTOCOL.MODULES.SHOOTER.TO_CLIENT.CHANGE_MAP, (initDataEvt) => this.mapManager.changeMap(initDataEvt.map, this.camera, this.scene));
+    this.synchronizer.start();
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
 

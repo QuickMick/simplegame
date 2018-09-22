@@ -31,7 +31,7 @@ module.exports = {
         CLIENT_DISCONNECTED: "CLIENT_DISCONNECTED",
 
         CLIENT_VALUE_UPDATE: "CLIENT_VALUE_UPDATE",
-        CLIENT_VALUE_UPDATE_REJECTED: "CLIENT_VALUE_UPDATE_REJECTED",
+        CLIENT_VALUE_UPDATE_REJECTED: "CLIENT_VALUE_UPDATE_REJECTED"
       },
       TO_SERVER: {
         ERROR: "ERROR",
@@ -57,14 +57,14 @@ module.exports = {
           CHAT_MSG: "CHAT_MSG"
         }
       },
-      MINIGOLF: {
-        MODULE_NAME: "MINIGOLF",
+      SHOOTER: {
+        MODULE_NAME: "SHOOTER",
         TO_CLIENT: {
           MAP: "MAP",
           ENTITY_ADDED: "ENTITY_ADDED",
           ENTITY_REMOVED: "ENTITY_REMOVED",
           PLAYER_SCORED: "PLAYER_SCORED",
-          PLAYER_SWINGED: "PLAYER_SWING"
+          CHANGE_MAP: "CHANGE_MAP"
         },
         TO_SERVER: {},
         STATE_UPDATE: {

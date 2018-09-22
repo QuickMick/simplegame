@@ -346,4 +346,6 @@ class Synchronizer extends Events {
   }
 }
 
+Synchronizer.ON_MAPCHANGE = "onMapchange";
+
 module.exports = Synchronizer;

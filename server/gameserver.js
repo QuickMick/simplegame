@@ -52,7 +52,7 @@ class Server {
     this.clients.set(socket.id, client);
     debug(`client ${socket.id} with ip ${socket.handshake.address} disconnected`);
     socket.on("disconnect", this._clientDisconnect.bind(this, socket));
-
+    console.log("connect");
     this._sendToClient(
       socket,
       COM.PROTOCOL.GENERAL.TO_CLIENT.RESPONSE_CLIENT_ACCEPTED,
@@ -69,6 +69,16 @@ class Server {
       COM.createEvent(
         this.id, {
           client: client.getClientData()
+        }
+      )
+    );
+
+    this._sendToClient(
+      socket,
+      COM.PROTOCOL.MODULES.SHOOTER.TO_CLIENT.CHANGE_MAP,
+      COM.createEvent(
+        this.id, {
+          map: this.world.getMap()
         }
       )
     );

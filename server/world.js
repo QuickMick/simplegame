@@ -7,6 +7,17 @@ const TICKS = require("./../core/ticks.json");
 class World {
   constructor() {
     this.world = null;
+
+    this.map = {
+      width: 0,
+      height: 0,
+      data: [],
+      tiles: [{
+        texture: "missing.png"
+      }]
+    };
+
+    this._loadMap();
   }
 
   start() {
@@ -30,7 +41,14 @@ class World {
         }
       }
     }, TICKS.SERVER_UPDATE_INTERVAL);
+
+
   }
+
+  getMap() {
+    return this.map;
+  }
+
 
   /**
    * loads a map
@@ -39,7 +57,19 @@ class World {
    * @memberof World
    */
   _loadMap(map) {
+    const width = 10;
+    const height = 10;
 
+    this.map.width = width;
+    this.map.height = height;
+    this.map.data = [];
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (y === 0 || x === 0 || y === (height - 1) || x === (width - 1))
+          this.map.data[(y * width) + x] = 0;
+        else this.map.data[(y * width) + x] = -1;
+      }
+    }
   }
 
   update(delta) {

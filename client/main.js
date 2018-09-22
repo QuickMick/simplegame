@@ -48,7 +48,6 @@ window.onload = function() {
     e.preventDefault();
   };
 
-
   window.resources = new Map();
   const texturePromises = [];
   const loader = new THREE.TextureLoader();
