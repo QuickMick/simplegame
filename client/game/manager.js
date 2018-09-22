@@ -62,7 +62,9 @@ class GameManager extends Events {
 
     const s = 0.2;
     this.geometry = new THREE.BoxGeometry(s, s, s);
-    this.material = new THREE.MeshNormalMaterial();
+    this.material = new THREE.MeshBasicMaterial({
+      map: window.resources.get("missing.png").texture
+    });
 
     this.mesh = new THREE.Mesh(this.geometry, this.material);
     this.scene.add(this.mesh);
