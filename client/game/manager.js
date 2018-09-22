@@ -3,7 +3,7 @@
  */
 
 'use strict';
-
+const THREE = require("three");
 const Events = require('events');
 const InputManager = require('./inputmanager');
 const Synchronizer = require('./synchronizer');
@@ -12,14 +12,10 @@ const CONFIG = require('./../config.json');
 
 class GameManager extends Events {
 
-  constructor(app) {
+  constructor() {
     super();
-    this.app = app;
-
-    this.on('resize', (d) => {});
-
-    this.inputManager = new InputManager(this.app);
-    this.inputManager.loadMapping(CONFIG.KEY_MAPPING);
+    //  this.inputManager = new InputManager(this.app);
+    // this.inputManager.loadMapping(CONFIG.KEY_MAPPING);
 
     this.synchronizer = new Synchronizer(PKG.PROTOCOL.MODULES.MINIGOLF.TO_CLIENT);
 
@@ -45,13 +41,48 @@ class GameManager extends Events {
   }
 
   update(delta) {
-    const elapsed = this.app.ticker.elapsedMS;
-    const d = elapsed / 1000;
+    // const elapsed = this.app.ticker.elapsedMS;
+    // const d = elapsed / 1000;
 
     //  this.entityManager.update(d);
-    for (let i = 0; i < window.UPDATE.length; i++) {
-      window.UPDATE[i](d);
-    }
+    this.mesh.rotation.x += 0.01;
+    this.mesh.rotation.y += 0.02;
+  }
+
+  render() {
+    this.renderer.render(this.scene, this.camera);
+  }
+
+  startScene(target) {
+    const x = target.getBoundingClientRect();
+    this.camera = new THREE.PerspectiveCamera(70, x.width / x.height, 0.01, 10);
+    this.camera.position.z = 1;
+
+    this.scene = new THREE.Scene();
+
+    const s = 0.2;
+    this.geometry = new THREE.BoxGeometry(s, s, s);
+    this.material = new THREE.MeshNormalMaterial();
+
+    this.mesh = new THREE.Mesh(this.geometry, this.material);
+    this.scene.add(this.mesh);
+
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+
+    const resize = () => {
+      const x = target.getBoundingClientRect();
+      this.renderer.setSize(x.width, x.height);
+      this.camera.aspect = x.width / x.height;
+      this.camera.updateProjectionMatrix();
+      this.emit('resize', {
+        width: x.width,
+        height: x.height
+      });
+    };
+    window.addEventListener("resize", resize);
+    resize();
+
+    target.appendChild(this.renderer.domElement);
   }
 
 }

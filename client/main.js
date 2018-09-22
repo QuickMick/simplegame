@@ -1,11 +1,8 @@
-"use strict";
-require('pixi.js');
-var Path = require('path');
+const Path = require('path');
+const THREE = require("three");
 
-var Resources = require('./resources.json');
-var Config = require('./config.json');
-
-
+const Resources = require('./resources.json');
+const Config = require('./config.json');
 const GameManager = require('./game/manager');
 
 /**
@@ -14,21 +11,6 @@ const GameManager = require('./game/manager');
  */
 window.UPDATE = [];
 
-
-
-PIXI.Container.prototype.bringToFront = PIXI.Sprite.prototype.bringToFront = function() {
-  if (this.parent) {
-    var parent = this.parent;
-    parent.removeChild(this);
-    parent.addChild(this);
-  }
-};
-
-PIXI.Container.prototype.removeAll = PIXI.Sprite.prototype.removeAll = function() {
-  while (this.children[0]) {
-    this.removeChild(this.children[0]);
-  }
-};
 
 if (window.requestAnimationFrame) //(func);
   window.requestAnimationFrame = window.requestAnimationFrame;
@@ -60,21 +42,16 @@ window.hideLoadingDialog = function() {
 
 window.onload = function() {
   window.showLoadingDialog();
-  window.hideLoadingDialog();
   var screen = document.getElementById("stage");
   // prevent context menu on gameplay
   screen.oncontextmenu = function(e) {
     e.preventDefault();
   };
 
-  //  PIXI.RESOLUTION = 2;
-  const app = new PIXI.Application(800, 600, {
-    backgroundColor: 0x1099bb,
-    antialising: true,
-    autoResize: true
-  });
-  screen.appendChild(app.view);
 
+  window.resources = new Map();
+  const texturePromises = [];
+  const loader = new THREE.TextureLoader();
   // preparing loading game resouces
   for (const area_key in Resources) {
     if (!Resources.hasOwnProperty(area_key)) continue;
@@ -86,32 +63,56 @@ window.onload = function() {
       if (!current_area.content.hasOwnProperty(content_key)) continue;
       const resource_name = current_area.content[content_key].texture;
       const resource_path = Path.join(Config.PATHS.RESOURCE_BASE, folder, resource_name);
-      PIXI.loader.add({
-        name: resource_name,
-        url: resource_path
-      });
+
+      texturePromises.push(new Promise((resolve, reject) => {
+        loader.load(resource_path,
+          texture => {
+            const result = {
+              name: resource_name,
+              url: resource_path,
+              texture: texture
+            };
+            window.resources.set(resource_name, result);
+            if (texture instanceof THREE.Texture) resolve(result);
+          },
+          xhr => {
+            console.log(resource_name + ' ' + (xhr.loaded / xhr.total * 100) + '% loaded');
+          },
+          xhr => {
+            reject(new Error(xhr + 'An error occurred loading while loading: ' + resource_path));
+          }
+        );
+      }));
     }
   }
 
-  // load game resources and once finished, start the game
-  PIXI.loader.once('complete', function() {
-    setTimeout(function() {
-      window.hideLoadingDialog();
-      const gameManager = new GameManager(app);
-      gameManager.start();
-      app.ticker.add(gameManager.update.bind(gameManager));
-      // app.ticker.add(require('./inputhandler').update);
-      function resize() {
-        const x = screen.getBoundingClientRect();
-        app.renderer.resize(x.width, x.height);
-        gameManager.emit('resize', {
-          width: x.width,
-          height: x.height
-        });
-      }
+  // load the geometry and the textures
+  Promise.all(texturePromises).then(loadedTextures => {
+    window.hideLoadingDialog();
+    const gameManager = new GameManager();
+    gameManager.start();
 
-      resize();
-      window.addEventListener("resize", resize);
-    }, 100);
-  }.bind(this)).load();
+    gameManager.startScene(screen);
+
+    function animate() {
+      requestAnimationFrame(animate);
+      gameManager.update(1); // TODO: update delta
+      for (let i = 0; i < window.UPDATE.length; i++) {
+        window.UPDATE[i](delta);
+      }
+      gameManager.render();
+    }
+    animate();
+    // var geometry = new THREE.SphereGeometry(radius, segments, segments);
+    // var material = new THREE.MeshPhongMaterial({
+    //   map: textures.map.val,
+    //   bumpMap: textures.bumpMap.val,
+    //   bumpScale: 0.005,
+    //   specularMap: textures.specularMap.val,
+    //   specular: new THREE.Color('grey')
+    // });
+
+    // var earth = that.earth = new THREE.Mesh(geometry, material);
+    // that.add(earth);
+  });
 };

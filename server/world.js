@@ -29,28 +29,28 @@ class World {
           // draw or update fixture
         }
       }
-    }, TICKS.SERVER_UPDATE_INTERVAL));
-}
+    }, TICKS.SERVER_UPDATE_INTERVAL);
+  }
 
-/**
- * loads a map
- *
- * @param {map} map object
- * @memberof World
- */
-_loadMap(map) {
+  /**
+   * loads a map
+   *
+   * @param {map} map object
+   * @memberof World
+   */
+  _loadMap(map) {
 
-}
+  }
 
-update(delta) {
-  // this.world.step(TICKS.SERVER_UPDATE_INTERVAL);
-  this.world.step(delta);
-}
+  update(delta) {
+    // this.world.step(TICKS.SERVER_UPDATE_INTERVAL);
+    this.world.step(delta);
+  }
 
-addPlayer(client) {
-  const player = this.world.createBody(Vec2(0, 0));
-  // planck.Circle();
-}
+  addPlayer(client) {
+    const player = this.world.createBody(Vec2(0, 0));
+    // planck.Circle();
+  }
 }
 
 module.exports = World;

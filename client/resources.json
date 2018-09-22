@@ -1,6 +1,6 @@
 {
   "default": {
-    "base_folder": "default",
+    "base_folder": "",
     "content": {
       "missing_texture": {
         "texture": "missing.png"
