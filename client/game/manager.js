@@ -8,11 +8,10 @@ const Events = require('events');
 const InputManager = require('./inputmanager');
 const Synchronizer = require('./synchronizer');
 const MapManager = require('./mapmanager');
-const PKG = require('./../../core/com');
 const CONFIG = require('./../config.json');
-
 const Effects = require('./effects');
 
+const PKG = require('./../../core/com');
 const MS = PKG.PROTOCOL.MODULES.SHOOTER;
 const G = PKG.PROTOCOL.GENERAL;
 
@@ -23,70 +22,67 @@ class GameManager extends Events {
     //  this.inputManager = new InputManager(this.app);
     // this.inputManager.loadMapping(CONFIG.KEY_MAPPING);
 
+    this.scenes = {};
+
     this.mapManager = new MapManager();
     this.synchronizer = new Synchronizer(MS.TO_CLIENT);
     this.started = false;
   }
 
-  start() {
+  run(target) {
+    this.target = target;
     window.addEventListener("resize", this.resize.bind(this));
-
-    this.synchronizer.on("on" + MS.TO_CLIENT.CHANGE_MAP,
-      (initDataEvt) => this.mapManager.changeMap(initDataEvt.map, this.camera, this.scene));
-
-
-    this.synchronizer.on("on" + G.TO_CLIENT.UPDATE_STATE, (updates) => {
-      console.log("TOOD: incoming update");
-    });
-
     this.synchronizer.start();
 
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.started = true;
 
-  }
-
-  resize() {}
-
-  update(delta) {
-    if (!this.started) return;
-    // const elapsed = this.app.ticker.elapsedMS;
-    // const d = elapsed / 1000;
-
-    //  this.entityManager.update(d);
-  }
-
-  render() {
-    this.renderer.render(this.scene, this.camera);
-  }
-
-  startScene(target) {
-    const x = target.getBoundingClientRect();
-    this.camera = new THREE.PerspectiveCamera(70, x.width / x.height, 0.01, 10);
-    this.camera.position.z = 5;
-
-
-    this.scene = new THREE.Scene();
-
-    Effects.initSky(this.scene);
-
-
-    this.resize = () => {
-      const x = target.getBoundingClientRect();
-      this.renderer.setSize(x.width, x.height);
-      this.camera.aspect = x.width / x.height;
-      this.camera.updateProjectionMatrix();
-      this.emit('resize', {
-        width: x.width,
-        height: x.height
-      });
-    };
-
-    this.resize();
-
     target.appendChild(this.renderer.domElement);
   }
 
+  _initListeners() {
+    this.synchronizer.on("on" + G.TO_CLIENT.UPDATE_STATE, (updates) => {
+      console.log("TOOD: incoming update");
+    });
+  }
+
+  addScene(scene) {
+    this.scenes[scene.getName()] = new scene();
+  }
+
+  startScene(name) {
+    if (this.currentScene) {
+      this.currentScene.pause();
+      this.currentScene.stop();
+    }
+    this.synchronizer.removeAllListeners();
+    this._initListeners();
+
+    const scene = this.scenes[name];
+
+    this.currentScene = scene;
+    this.currentScene.init(this.renderer, this.target, this.synchronizer);
+    this.currentScene.continue();
+  }
+
+  resize() {
+    if (!this.currentScene) return;
+    this.currentScene.resize(this.target, this.renderer);
+  }
+
+  update(delta) {
+    if (!this.started) return;
+    if (!this.currentScene) return;
+    // const elapsed = this.app.ticker.elapsedMS;
+    // const d = elapsed / 1000;
+
+    this.currentScene.update(delta);
+  }
+
+  render() {
+    if (!this.currentScene) return;
+    this.currentScene.render(this.renderer);
+  }
 }
 
 module.exports = GameManager;

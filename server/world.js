@@ -2,22 +2,22 @@ const Planck = require("planck-js");
 const Vec2 = require("planck-js/lib/common/Vec2");
 const TICKS = require("./../core/ticks.json");
 
-
+function createEmptyMap(width, height) {
+  return {
+    width: width,
+    height: height,
+    data: [], //contains indexes of the tiles array
+    tiles: [{
+      texture: "missing.png",
+      size: 0.2
+    }]
+  };
+}
 
 class World {
   constructor() {
     this.world = null;
-
-    this.map = {
-      width: 0,
-      height: 0,
-      data: [],
-      tiles: [{
-        texture: "missing.png",
-        size: 0.2
-      }]
-    };
-
+    this.map = null;
     this._loadMap();
   }
 
@@ -42,14 +42,11 @@ class World {
         }
       }
     }, TICKS.SERVER_UPDATE_INTERVAL);
-
-
   }
 
   getMap() {
     return this.map;
   }
-
 
   /**
    * loads a map
@@ -60,10 +57,8 @@ class World {
   _loadMap(map) {
     const width = 10;
     const height = 10;
+    this.map = createEmptyMap(width, height);
 
-    this.map.width = width;
-    this.map.height = height;
-    this.map.data = [];
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         if (y === 0 || x === 0 || y === (height - 1) || x === (width - 1))

@@ -1,43 +1,74 @@
 const THREE = require("three");
 
 class Scene {
-  constructor(target, renderer) {
-    this.target = target;
-    this.renderer = renderer;
+  constructor() {
     this.scene = new THREE.Scene();
     this.camera = null;
   }
 
-  resize() {
-    const x = this.target.getBoundingClientRect();
-    this.renderer.setSize(x.width, x.height);
+  /**
+   *
+   * @static
+   * @memberof Scene
+   * @returns [string] the name
+   */
+  static getName() {
+    throw new Error("Override with name");
+  }
+
+  resize(target, renderer) {
+    const x = target.getBoundingClientRect();
+    renderer.setSize(x.width, x.height);
     if (!this.camera) return;
     this.camera.aspect = x.width / x.height;
     this.camera.updateProjectionMatrix();
   }
 
-  init() {
+  /**
+   * called when the scene is started
+   *
+   * @param {*} synchronizer
+   * @memberof Scene
+   */
+  init(renderer, target, synchronizer) {
 
   }
 
-  update() {
-
-  }
-
-  render() {
-    this.renderer.render(this.scene, this.camera);
-  }
-
+  /**
+   *called on pause
+   *
+   * @memberof Scene
+   */
   pause() {
 
   }
 
+  /**
+   *called after start or after pause
+   *
+   * @memberof Scene
+   */
   continue () {
 
   }
 
-  clean() {
+  /**
+   * cleanup
+   *
+   * @memberof Scene
+   */
+  stop() {
 
+  }
+
+
+
+  update(delta) {
+
+  }
+
+  render(renderer) {
+    renderer.render(this.scene, this.camera);
   }
 }
 

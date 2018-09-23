@@ -42,7 +42,7 @@ window.hideLoadingDialog = function() {
 
 window.onload = function() {
   window.showLoadingDialog();
-  var screen = document.getElementById("stage");
+  const screen = document.getElementById("stage");
   // prevent context menu on gameplay
   screen.oncontextmenu = function(e) {
     e.preventDefault();
@@ -89,9 +89,12 @@ window.onload = function() {
   Promise.all(texturePromises).then(loadedTextures => {
     window.hideLoadingDialog();
     const gameManager = new GameManager();
-    gameManager.start();
 
-    gameManager.startScene(screen);
+    gameManager.addScene(require('./game/scenes/gameplay'));
+
+    gameManager.run(screen);
+
+    gameManager.startScene("GAMEPLAY");
 
     function animate() {
       requestAnimationFrame(animate);

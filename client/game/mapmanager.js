@@ -18,7 +18,8 @@ __proto__: Object
   
   */
 
-  changeMap(map, camera, scene) {
+  changeMap(map) {
+    const result = [];
     for (let y = 0; y < map.height; y++) {
       for (let x = 0; x < map.width; x++) {
         const i = (y * map.width) + x;
@@ -26,21 +27,17 @@ __proto__: Object
         if (d < 0) continue;
 
         const t = map.tiles[d];
-
         const material = new THREE.MeshBasicMaterial({
           map: window.resources.get(t.texture).texture
         });
-
         const geometry = new THREE.BoxGeometry(t.size, t.size, t.size);
-
         const mesh = new THREE.Mesh(geometry, material);
-        mesh.position.x = x * s;
-        mesh.position.y = y * s;
-        scene.add(mesh);
-
+        mesh.position.x = x * t.size;
+        mesh.position.y = y * t.size;
+        result.push(mesh);
       }
     }
-
+    return result;
   }
 }
 
