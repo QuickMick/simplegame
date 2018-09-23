@@ -4,8 +4,9 @@ const COM = require('./../core/com');
 const socketIo = require('socket.io');
 const uuid = require("uuid/v4");
 const World = require('./world');
-
+const UpdateQueue = require('./../core/updatequeue');
 const CONF = require('./conf.json');
+const TICKS = require('./../core/ticks.json');
 
 const generateName = require('./../util/namegenerator');
 const COLORS = [];
@@ -32,12 +33,19 @@ class Server {
     this.connected = 0;
     this.clients = new Map();
     this.world = new World();
+    this.updateQueue = new UpdateQueue();
   }
 
   run(server) {
     this.io = socketIo(server);
     debug("sockets running");
     this.io.on("connection", this._clientConnected.bind(this));
+
+    setTimeout(() => {
+      const updates = this.updateQueue.popUpdatedData();
+      if (!updates) return;
+      this._broadcast(COM.PROTOCOL.GENERAL.TO_CLIENT.BATCH_UPDATE, updates);
+    }, TICKS.SYNCHONIZATION_RATE);
   }
 
   _clientConnected(socket) {
