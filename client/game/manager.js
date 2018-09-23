@@ -58,9 +58,7 @@ class GameManager extends Events {
     this.synchronizer.removeAllListeners();
     this._initListeners();
 
-    const scene = this.scenes[name];
-
-    this.currentScene = scene;
+    this.currentScene = this.scenes[name];
     this.currentScene.init(this.renderer, this.target, this.synchronizer);
     this.currentScene.continue();
   }
