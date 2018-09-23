@@ -13,6 +13,9 @@ const CONFIG = require('./../config.json');
 
 const Effects = require('./effects');
 
+const MS = PKG.PROTOCOL.MODULES.SHOOTER;
+const G = PKG.PROTOCOL.GENERAL;
+
 class GameManager extends Events {
 
   constructor() {
@@ -21,22 +24,24 @@ class GameManager extends Events {
     // this.inputManager.loadMapping(CONFIG.KEY_MAPPING);
 
     this.mapManager = new MapManager();
-    this.synchronizer = new Synchronizer(PKG.PROTOCOL.MODULES.SHOOTER.TO_CLIENT);
+    this.synchronizer = new Synchronizer(MS.TO_CLIENT);
     this.started = false;
   }
 
   start() {
     window.addEventListener("resize", this.resize.bind(this));
 
-    this.synchronizer.on("on" + PKG.PROTOCOL.MODULES.SHOOTER.TO_CLIENT.CHANGE_MAP,
+    this.synchronizer.on("on" + MS.TO_CLIENT.CHANGE_MAP,
       (initDataEvt) => this.mapManager.changeMap(initDataEvt.map, this.camera, this.scene));
 
 
-    this.synchronizer.on("on" + PKG.PROTOCOL.GENERAL.TO_CLIENT.UPDATE_STATE, (updates) => {
+    this.synchronizer.on("on" + G.TO_CLIENT.UPDATE_STATE, (updates) => {
       console.log("TOOD: incoming update");
     });
 
     this.synchronizer.start();
+
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
     this.started = true;
 
   }
@@ -65,7 +70,6 @@ class GameManager extends Events {
 
     Effects.initSky(this.scene);
 
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
 
     this.resize = () => {
       const x = target.getBoundingClientRect();

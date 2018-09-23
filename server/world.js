@@ -13,7 +13,8 @@ class World {
       height: 0,
       data: [],
       tiles: [{
-        texture: "missing.png"
+        texture: "missing.png",
+        size: 0.2
       }]
     };
 
