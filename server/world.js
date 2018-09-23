@@ -1,6 +1,7 @@
 const Planck = require("planck-js");
 const Vec2 = require("planck-js/lib/common/Vec2");
 const TICKS = require("./../core/ticks.json");
+const SIZE = require('./../core/size.json');
 
 function createEmptyMap(width, height) {
   return {
@@ -9,7 +10,7 @@ function createEmptyMap(width, height) {
     data: [], //contains indexes of the tiles array
     tiles: [{
       texture: "missing.png",
-      size: 0.2
+      size: SIZE.METER
     }]
   };
 }

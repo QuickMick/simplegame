@@ -60,7 +60,9 @@ class GameManager extends Events {
 
     this.currentScene = this.scenes[name];
     this.currentScene.init(this.renderer, this.target, this.synchronizer);
+
     this.currentScene.continue();
+    this.resize();
   }
 
   resize() {
